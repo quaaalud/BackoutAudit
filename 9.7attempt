@@ -18,7 +18,7 @@ audit["BO or NO"] = (audit["ReverseDate"] >= audit["EffectiveDate"])
 audit = audit.loc[audit["BO or NO"] == True]
 audit = audit.loc[~audit["ReverseReason"].str.contains("Declined", flags=re.I, regex=True)]
 audit["BO Tag?"] = audit.loc[audit["TagList"].str.contains("- BO") == True]
-audit = audit.sort_values("BO Tag?)
+audit = audit.sort_values("BO Tag?")
 audit = audit.reset_index(drop=True)
 
 
