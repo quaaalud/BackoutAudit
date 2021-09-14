@@ -7,17 +7,22 @@ import numpy as np
 import pandas as pd
 import re
 
-bos = pd.read_csv (r"C:\Users\Dale\Desktop\pywip\weeklyreports\NVPSBO8.26to9.4.csv", 
+bos = pd.read_csv (r"C:\Users\dludwinski\Desktop\wip\NVPSbo9.5to9.11.csv", 
                    usecols=["ReverseDate", "ReverseReason", "EffectiveDate", 
                             "ReversedBy", "TagList", "ResponseCode"])
 
 bos.insert(0, "BO or NO", "")
 bos.insert(6, "BO Tag?", "")
 audit = bos.sort_values("ReverseReason")
-audit["BO or NO"] = (audit["ReverseDate"] >= audit["EffectiveDate"])
+rev = pd.to_datetime(audit["ReverseDate"])
+eff = pd.to_datetime(audit["EffectiveDate"])
+
+audit["BO or NO"] = (rev >= eff)
 audit = audit.loc[audit["BO or NO"] == True]
+
 audit = audit.loc[~audit["ReverseReason"].str.contains("Declined", flags=re.I, regex=True)]
 audit["BO Tag?"] = audit.loc[audit["TagList"].str.contains("- BO") == True]
+
 audit = audit.sort_values("BO Tag?")
 audit = audit.reset_index(drop=True)
 
@@ -25,7 +30,4 @@ audit = audit.reset_index(drop=True)
 print((audit["BO Tag?"] == True).count())        
 print(audit)
 
-audit.to_csv(r"C:\Users\Dale\Desktop\pywip\weeklyreports\BOaudit1.csv")
-
-  
-    
+audit.to_csv(r"C:\Users\dludwinski\Desktop\wip\NVPSboaudit1.csv")
